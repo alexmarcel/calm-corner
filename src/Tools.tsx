@@ -543,7 +543,7 @@ export default function Tools({
                   onSOS();
                 }}
               >
-                Saya tidak rasa selamat — dapatkan bantuan
+                   Saya tidak rasa selamat, dapatkan bantuan
               </button>
             </div>
           </div>
