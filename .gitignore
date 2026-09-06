@@ -1,0 +1,47 @@
+# Dependencies and generated build output
+node_modules/
+/dist/
+*.tsbuildinfo
+
+# Test results and coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/coverage/
+.nyc_output/
+
+# Tool caches and local deployment state
+.vite/
+.cache/
+.eslintcache
+.vercel/
+
+# Local environment files (keep documented templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Personal app exports accidentally saved in the checkout
+calm-corner-????-??-??.json
+
+# Editor and operating-system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Calm Corner — Ruang untuk diri",
+  "short_name": "Calm Corner",
+  "lang": "ms",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#123f48",
+  "theme_color": "#123f48",
+  "description": "Penjagaan kendiri, di mana sahaja. Berfungsi luar talian.",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
