@@ -12,7 +12,8 @@
     "check:pwa": "node scripts/check-pwa.mjs",
     "diagnose:webkit": "node scripts/diagnose-webkit.mjs",
     "lint": "eslint .",
-    "assets": "node scripts/assets.mjs"
+    "assets": "node scripts/assets.mjs",
+    "assets:cafe": "node scripts/cafe.mjs"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.0",
