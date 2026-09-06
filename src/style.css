@@ -19,7 +19,7 @@ html {
   /* Keep browser focus/tap scrolling stable; check-in navigation opts into animation. */
   scroll-behavior: auto;
   scroll-padding-top: 24px;
-  scroll-padding-bottom: var(--install-banner-space, 16px);
+  scroll-padding-bottom: calc(var(--install-banner-space, 16px) + 88px);
 }
 body {
   margin: 0;
@@ -2405,5 +2405,102 @@ progress {
 @media (max-width: 540px) {
   .about-members {
     grid-template-columns: 1fr;
+  }
+}
+
+.leaf-scroll-space {
+  height: 88px;
+}
+.leaf-menu {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(
+    var(--install-banner-space, 16px),
+    calc(env(safe-area-inset-bottom) + 16px)
+  );
+  z-index: 15;
+}
+.leaf-menu[hidden],
+.leaf-panel[hidden] {
+  display: none;
+}
+.leaf-trigger {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: #fffefa;
+  box-shadow: 0 3px 14px #203e3c22;
+}
+.leaf-trigger svg {
+  width: 48px;
+  height: 48px;
+}
+.leaf-greeting {
+  position: absolute;
+  left: 68px;
+  bottom: 7px;
+  white-space: nowrap;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 15px 15px 15px 3px;
+  background: #fffefa;
+  color: var(--green);
+  box-shadow: 0 3px 14px #203e3c15;
+  pointer-events: none;
+  transition:
+    opacity 200ms,
+    visibility 200ms;
+}
+.leaf-greeting.faded {
+  opacity: 0;
+  visibility: hidden;
+}
+.leaf-panel {
+  position: absolute;
+  bottom: 68px;
+  left: 0;
+  width: min(
+    280px,
+    calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right))
+  );
+  max-height: calc(
+    100dvh -
+      max(
+        var(--install-banner-space, 16px),
+        calc(env(safe-area-inset-bottom) + 16px)
+      ) -
+      84px - env(safe-area-inset-top)
+  );
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fffefa;
+  box-shadow: 0 6px 24px #203e3c25;
+}
+.leaf-panel p {
+  margin: 0 8px 8px;
+  font-weight: 600;
+  color: var(--green);
+}
+.leaf-panel button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 9px;
+}
+.leaf-panel button:hover {
+  background: #eaf0e6;
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf-greeting {
+    transition: none;
   }
 }

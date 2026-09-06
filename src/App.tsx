@@ -27,7 +27,8 @@ import {
 import { Brand, Modal } from "./components";
 import CheckInPanel from "./CheckIn";
 import Diary, { type DiaryHandle } from "./Diary";
-import Tools from "./Tools";
+import Tools, { type ToolsHandle } from "./Tools";
+import LeafMenu, { type Shortcut } from "./LeafMenu";
 import Settings from "./Settings";
 import About from "./About";
 import {
@@ -89,12 +90,21 @@ export default function App() {
     (trigger?.getClientRects().length ? trigger : menuTrigger.current)?.focus();
   }, []);
   const [checkInRequest, setCheckInRequest] = useState(0);
-  const checkInPending = useRef(false);
+  const checkInPending = useRef<"checkin" | "journal" | null>(null);
+  const tools = useRef<ToolsHandle>(null);
+  const leafTrigger = useRef<HTMLButtonElement>(null);
+  const leafDialog = useRef(false);
+  const restoreLeafFocus = useCallback(() => {
+    requestAnimationFrame(() => leafTrigger.current?.focus());
+  }, []);
+  const requestNavigation = (destination: "checkin" | "journal") => {
+    setMenu(false);
+    checkInPending.current = destination;
+    setCheckInRequest((request) => request + 1);
+  };
   const navigateToCheckIn = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    setMenu(false);
-    checkInPending.current = true;
-    setCheckInRequest((request) => request + 1);
+    requestNavigation("checkin");
   };
   const diary = useRef<DiaryHandle>(null);
   const offline = useOffline();
@@ -120,7 +130,7 @@ export default function App() {
   useEffect(() => {
     if (loading || !checkInPending.current) return;
     const destination =
-      data.settings || storageError ? "checkin" : "onboarding";
+      data.settings || storageError ? checkInPending.current : "onboarding";
     const target = document.getElementById(destination);
     if (!target) return;
     const frame = requestAnimationFrame(() => {
@@ -132,12 +142,15 @@ export default function App() {
           : "smooth",
       });
       history.replaceState(history.state, "", `#${destination}`);
-      if (destination === "checkin") checkInPending.current = false;
+      if (destination !== "onboarding") checkInPending.current = null;
     });
     return () => cancelAnimationFrame(frame);
   }, [checkInRequest, loading, data.settings, storageError]);
   const pause = useCallback(() => setPauseSignal((v) => v + 1), []);
-  const close = useCallback(() => setModal(null), []);
+  const close = useCallback(() => {
+    setModal(null);
+    leafDialog.current = false;
+  }, []);
   const sos = useCallback(() => {
     pause();
     setModal("sos");
@@ -150,6 +163,18 @@ export default function App() {
     setModal(null);
     setEpoch((x) => x + 1);
     void refresh().catch(() => {});
+  };
+  const onShortcut = (action: Shortcut) => {
+    if (action === "checkin" || action === "journal") requestNavigation(action);
+    else if (action === "history" || action === "sos") {
+      checkInPending.current = null;
+      leafDialog.current = true;
+      if (action === "sos") sos();
+      else setModal("history");
+    } else {
+      checkInPending.current = null;
+      tools.current?.select(action);
+    }
   };
   const today = new Date();
   const day = Math.floor(
@@ -420,7 +445,7 @@ export default function App() {
             )}
           </div>
         )}
-        <Tools pauseSignal={pauseSignal} onSOS={sos} />
+        <Tools ref={tools} pauseSignal={pauseSignal} onSOS={sos} />
         <section className="journey-strip">
           <span className="round-icon">
             <BookHeart size={24} />
@@ -463,6 +488,11 @@ export default function App() {
           </button>
         </footer>
       </main>
+      <LeafMenu
+        triggerRef={leafTrigger}
+        blocked={modal !== null || menu}
+        onSelect={onShortcut}
+      />
       {modal === "about" && (
         <Modal
           title="Tentang Calm Corner"
@@ -496,7 +526,12 @@ export default function App() {
         </Modal>
       )}
       {modal === "sos" && (
-        <Modal title="Kami di sini untuk membantu" onClose={close} wide>
+        <Modal
+          title="Kami di sini untuk membantu"
+          onClose={close}
+          restoreFocus={leafDialog.current ? restoreLeafFocus : undefined}
+          wide
+        >
           <SOS contacts={data.contacts} />
         </Modal>
       )}
@@ -512,7 +547,12 @@ export default function App() {
         </Modal>
       )}
       {modal === "history" && (
-        <Modal title="Perjalanan kecil anda" onClose={close} wide>
+        <Modal
+          title="Perjalanan kecil anda"
+          onClose={close}
+          restoreFocus={leafDialog.current ? restoreLeafFocus : undefined}
+          wide
+        >
           <div className="history-list">
             <h3>Sejarah check-in</h3>
             {data.checks.length === 0 ? (

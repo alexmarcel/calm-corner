@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useImperativeHandle,
+  type Ref,
+} from "react";
 import {
   CloudRain,
   Waves,
@@ -57,10 +63,14 @@ const groundPrompts = [
   "Sebutkan 2 perkara yang anda boleh hidu.",
   "Sebutkan 1 perkara yang anda boleh rasa.",
 ];
+export type Tool = "sound" | "breathe" | "ground";
+export type ToolsHandle = { select: (tool: Tool) => void };
 export default function Tools({
+  ref,
   pauseSignal,
   onSOS,
 }: {
+  ref?: Ref<ToolsHandle>;
   pauseSignal: number;
   onSOS: () => void;
 }) {
@@ -174,6 +184,14 @@ export default function Tools({
     setBreathing(false);
     setTab(next);
   };
+  useImperativeHandle(ref, () => ({
+    select(next: Tool) {
+      changeTab(next);
+      const target = document.getElementById("tool-" + next);
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "center", behavior: "instant" });
+    },
+  }));
   return (
     <section id="tools" className="tools-section">
       <SectionHeading
@@ -189,6 +207,7 @@ export default function Tools({
         ].map((t) => (
           <button
             key={t.id}
+            id={`tool-${t.id}`}
             aria-pressed={tab === t.id}
             className={tab === t.id ? "active" : ""}
             onClick={() => changeTab(t.id)}
