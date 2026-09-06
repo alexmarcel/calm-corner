@@ -2359,3 +2359,51 @@ progress {
     transition: none !important;
   }
 }
+
+.about-content > p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 0;
+}
+.about-content section {
+  margin-top: 26px;
+}
+.about-content h3 {
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+.about-members {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.about-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fffefa;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.about-initials {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #eaf0e6;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+@media (max-width: 540px) {
+  .about-members {
+    grid-template-columns: 1fr;
+  }
+}

@@ -17,11 +17,13 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  restoreFocus,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  restoreFocus?: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -63,9 +65,10 @@ export function Modal({
       dialog.removeEventListener("keydown", trapFocus);
       dialog.close();
       document.body.style.overflow = "";
-      previous?.focus();
+      if (restoreFocus) restoreFocus();
+      else previous?.focus();
     };
-  }, [onClose]);
+  }, [onClose, restoreFocus]);
   return (
     <dialog
       ref={ref}

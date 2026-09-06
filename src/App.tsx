@@ -29,6 +29,7 @@ import CheckInPanel from "./CheckIn";
 import Diary, { type DiaryHandle } from "./Diary";
 import Tools from "./Tools";
 import Settings from "./Settings";
+import About from "./About";
 import {
   emptyData,
   localDate,
@@ -76,11 +77,17 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState("");
   const [modal, setModal] = useState<
-    "sos" | "settings" | "history" | "install" | "installed" | null
+    "sos" | "settings" | "history" | "install" | "installed" | "about" | null
   >(null);
   const [pauseSignal, setPauseSignal] = useState(0);
   const [epoch, setEpoch] = useState(0);
   const [menu, setMenu] = useState(false);
+  const aboutTrigger = useRef<HTMLButtonElement>(null);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
+  const restoreAboutFocus = useCallback(() => {
+    const trigger = aboutTrigger.current;
+    (trigger?.getClientRects().length ? trigger : menuTrigger.current)?.focus();
+  }, []);
   const [checkInRequest, setCheckInRequest] = useState(0);
   const checkInPending = useRef(false);
   const navigateToCheckIn = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -175,6 +182,16 @@ export default function App() {
             >
               Catatan & sejarah
             </button>
+            <button
+              ref={aboutTrigger}
+              onClick={(event) => {
+                event.currentTarget.focus();
+                setMenu(false);
+                setModal("about");
+              }}
+            >
+              Tentang Kami
+            </button>
           </nav>
           <div className="header-actions">
             <button
@@ -190,6 +207,7 @@ export default function App() {
             </button>
             <button
               className="icon-button mobile-menu"
+              ref={menuTrigger}
               aria-label="Menu navigasi"
               aria-expanded={menu}
               onClick={() => setMenu(!menu)}
@@ -445,6 +463,16 @@ export default function App() {
           </button>
         </footer>
       </main>
+      {modal === "about" && (
+        <Modal
+          title="Tentang Calm Corner"
+          onClose={close}
+          restoreFocus={restoreAboutFocus}
+          wide
+        >
+          <About />
+        </Modal>
+      )}
       {mobileInstall && (
         <InstallBanner
           installation={installation}
