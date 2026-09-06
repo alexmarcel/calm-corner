@@ -1,0 +1,17 @@
+# Only send production build inputs to Docker.
+**
+!Dockerfile
+!package.json
+!package-lock.json
+!index.html
+!tsconfig.json
+!vite.config.ts
+!vercel.json
+!src/
+!src/**
+!public/
+!public/**
+!scripts/
+!scripts/**
+!docker/
+!docker/nginx.conf

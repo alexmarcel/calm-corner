@@ -17,6 +17,10 @@ node_modules/
 .eslintcache
 .vercel/
 
+# Droplet-specific deployment files
+/docker-compose.deploy.yml
+/docker-compose.deploy.*.yml
+
 # Local environment files (keep documented templates)
 .env
 .env.*
