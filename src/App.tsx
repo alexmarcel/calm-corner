@@ -559,27 +559,66 @@ export default function App() {
               <p>Belum ada check-in. Mulakan apabila anda bersedia.</p>
             ) : (
               data.checks.map((c) => (
-                <article key={c.id}>
-                  <span className="history-emoji">
-                    {moods.find((m) => m.id === c.mood)?.emoji}
-                  </span>
-                  <div>
-                    <strong>{moods.find((m) => m.id === c.mood)?.label}</strong>
-                    <time>{localDate(c.createdAt)}</time>
-                    <p>{c.factors.join(" · ") || "Tiada faktor dipilih"}</p>
-                    <p>
-                      {c.safety === "safe"
-                        ? "Rasa selamat"
-                        : c.safety === "unsure"
-                          ? "Kurang pasti"
-                          : "Tidak selamat"}{" "}
-                      ·{" "}
-                      {supportFor(c) === "green"
-                        ? "Ruang refleksi"
-                        : "Sokongan tersedia"}
-                    </p>
-                    {c.needs.length > 0 && <p>{c.needs.join(" · ")}</p>}
-                  </div>
+                <article key={c.id} className="history-entry">
+                  <header className="history-entry-heading">
+                    <span className="history-emoji" aria-hidden="true">
+                      {moods.find((m) => m.id === c.mood)?.emoji}
+                    </span>
+                    <div>
+                      <h4>{moods.find((m) => m.id === c.mood)?.label}</h4>
+                      <time dateTime={c.createdAt}>
+                        {localDate(c.createdAt)}
+                      </time>
+                    </div>
+                  </header>
+                  <dl className="history-details">
+                    <div>
+                      <dt>Faktor yang mempengaruhi</dt>
+                      <dd>
+                        {c.factors.length ? (
+                          <ul>
+                            {c.factors.map((factor) => (
+                              <li key={factor}>{factor}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          "Tiada faktor dipilih"
+                        )}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Rasa selamat</dt>
+                      <dd>
+                        {c.safety === "safe"
+                          ? "Rasa selamat"
+                          : c.safety === "unsure"
+                            ? "Kurang pasti"
+                            : "Tidak selamat"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Sokongan</dt>
+                      <dd>
+                        {supportFor(c) === "green"
+                          ? "Ruang refleksi"
+                          : "Sokongan tersedia"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Keperluan ketika itu</dt>
+                      <dd>
+                        {c.needs.length ? (
+                          <ul>
+                            {c.needs.map((need) => (
+                              <li key={need}>{need}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          "Tiada keperluan dipilih"
+                        )}
+                      </dd>
+                    </div>
+                  </dl>
                   <button
                     className="text-link"
                     onClick={async () => {

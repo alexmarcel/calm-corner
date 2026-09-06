@@ -161,7 +161,7 @@ export default function Tools({
     }
     const p = cue.current;
     if (p) {
-      p.src = `/audio/${pattern.cues[phase]}.wav`;
+      p.src = `/audio/${pattern.cues[phase]}.mp3`;
       void p
         .play()
         .catch(() =>

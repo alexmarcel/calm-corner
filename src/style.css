@@ -1674,27 +1674,71 @@ footer .text-link {
 .history-list > h3:not(:first-child) {
   margin-top: 25px;
 }
-.history-list article {
+.history-list .history-entry {
+  padding: 20px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fffefa;
+  overflow-wrap: anywhere;
+}
+.history-entry-heading {
   display: flex;
-  gap: 18px;
-  align-items: start;
-  border-bottom: 1px solid #e3e6db;
-  padding: 16px 0;
+  align-items: center;
+  gap: 14px;
 }
 .history-emoji {
-  font-size: 28px;
+  font-size: 30px;
+  flex-shrink: 0;
 }
-.history-list time {
+.history-entry-heading h4 {
+  margin: 0;
+  font-size: 18px;
+}
+.history-entry-heading time {
   display: block;
-  font-size: 10px;
+  margin-top: 3px;
+  font-size: 13px;
   color: #58654f;
+  line-height: 1.6;
 }
-.history-list article p {
-  font-size: 12px;
-  margin-top: 5px;
+.history-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 18px 0 12px;
+  font-size: 14px;
+  line-height: 1.7;
 }
-.history-list article > button {
+.history-details dt {
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.history-details dd {
+  margin: 0;
+}
+.history-details ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.history-details li + li {
+  margin-top: 4px;
+}
+.history-entry > button {
+  display: block;
   margin-left: auto;
+  min-height: 44px;
+  padding: 8px 4px;
+}
+@media (max-width: 540px) {
+  .history-list .history-entry {
+    padding: 16px;
+  }
+  .history-details {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }
 .history-list .secondary {
   margin-top: 13px;
@@ -2336,12 +2380,6 @@ progress {
   .update-banner {
     flex-direction: column;
     align-items: start;
-  }
-  .history-list article {
-    gap: 10px;
-  }
-  .history-list article p {
-    font-size: 11px;
   }
   .summary dl {
     grid-template-columns: 90px 1fr;
