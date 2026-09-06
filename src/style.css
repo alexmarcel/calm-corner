@@ -2527,12 +2527,20 @@ progress {
   color: var(--green);
 }
 .leaf-panel button {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   min-height: 44px;
   text-align: left;
   padding: 10px 12px;
   border-radius: 9px;
+}
+.leaf-panel button > svg {
+  flex-shrink: 0;
+}
+.leaf-panel button > span {
+  min-width: 0;
 }
 .leaf-panel button:hover {
   background: #eaf0e6;

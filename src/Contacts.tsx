@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { contactSchema, repository, type Contact } from "./data";
 
 export default function Contacts({
@@ -21,15 +21,24 @@ export default function Contacts({
   useEffect(() => {
     if (draft?.id) nameField.current?.focus();
   }, [draft?.id]);
-  const focus = (id?: string) =>
-    requestAnimationFrame(() => {
-      const target = id
-        ? root.current?.querySelector<HTMLButtonElement>(`[data-edit="${id}"]`)
-        : null;
-      (
-        target || root.current?.querySelector<HTMLButtonElement>("[data-add]")
-      )?.focus();
-    });
+  const [focusRequest, setFocusRequest] = useState<{ id?: string } | null>(
+    null,
+  );
+  const focus = (id?: string) => setFocusRequest({ id });
+  useLayoutEffect(() => {
+    if (!focusRequest || busy || draft) return;
+    const target = focusRequest.id
+      ? root.current?.querySelector<HTMLButtonElement>(
+          `[data-edit="${focusRequest.id}"]`,
+        )
+      : null;
+    const control =
+      target || root.current?.querySelector<HTMLButtonElement>("[data-add]");
+    if (control && !control.disabled) {
+      control.focus();
+      setFocusRequest(null);
+    }
+  }, [focusRequest, busy, draft, contacts]);
   const canDiscard = () =>
     !draft ||
     !original.current ||

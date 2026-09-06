@@ -1,15 +1,25 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import type { Tool } from "./Tools";
+import {
+  Heart,
+  Feather,
+  Headphones,
+  Wind,
+  Hand,
+  History,
+  HeartHandshake,
+  type LucideIcon,
+} from "lucide-react";
 
 export type Shortcut = "checkin" | "journal" | Tool | "history" | "sos";
-const shortcuts: { id: Shortcut; label: string }[] = [
-  { id: "checkin", label: "Mari check-in" },
-  { id: "journal", label: "Tulis catatan" },
-  { id: "sound", label: "Bunyi menenangkan" },
-  { id: "breathe", label: "Latihan pernafasan" },
-  { id: "ground", label: "Grounding" },
-  { id: "history", label: "Catatan & sejarah" },
-  { id: "sos", label: "SOS / Bantuan" },
+const shortcuts: { id: Shortcut; label: string; Icon: LucideIcon }[] = [
+  { id: "checkin", label: "Mari check-in", Icon: Heart },
+  { id: "journal", label: "Tulis catatan", Icon: Feather },
+  { id: "sound", label: "Bunyi menenangkan", Icon: Headphones },
+  { id: "breathe", label: "Latihan pernafasan", Icon: Wind },
+  { id: "ground", label: "Grounding", Icon: Hand },
+  { id: "history", label: "Catatan & sejarah", Icon: History },
+  { id: "sos", label: "SOS / Bantuan", Icon: HeartHandshake },
 ];
 const isEditing = () => {
   const element = document.activeElement;
@@ -136,7 +146,7 @@ export default function LeafMenu({
           hidden={!open || blocked || editing}
         >
           <p>Pilih ruang anda</p>
-          {shortcuts.map(({ id, label }) => (
+          {shortcuts.map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => {
@@ -145,7 +155,13 @@ export default function LeafMenu({
                 onSelect(id);
               }}
             >
-              {label}
+              <Icon
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+                focusable="false"
+              />
+              <span>{label}</span>
             </button>
           ))}
         </div>
