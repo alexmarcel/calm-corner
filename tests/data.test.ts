@@ -136,3 +136,58 @@ describe("local repository", () => {
     await next.delete();
   });
 });
+
+describe("trusted contacts", () => {
+  const contact = (name = "Aina") => {
+    const now = new Date().toISOString();
+    return {
+      id: crypto.randomUUID(),
+      name,
+      relationship: "Kawan",
+      phone: "+60123456789",
+      createdAt: now,
+      updatedAt: now,
+    };
+  };
+  it("preserves identity and backup compatibility when editing and deleting", async () => {
+    const first = contact();
+    await repo.saveContact(first);
+    await repo.saveContact({
+      ...first,
+      name: "Aina Baru",
+      updatedAt: "2026-09-07T00:00:00.000Z",
+    });
+    db.close();
+    await db.open();
+    const saved = (await repo.load()).contacts;
+    expect(saved).toHaveLength(1);
+    expect(saved[0]).toMatchObject({
+      id: first.id,
+      createdAt: first.createdAt,
+      name: "Aina Baru",
+    });
+    const backup = parseBackup(JSON.stringify(await repo.exportData()));
+    await repo.clear();
+    await repo.restore(backup);
+    expect((await repo.load()).contacts).toEqual(saved);
+    await repo.deleteContact(first.id);
+    expect((await repo.load()).contacts).toHaveLength(0);
+  });
+  it("enforces the cap across concurrent inserts but allows updates", async () => {
+    const records = Array.from({ length: 19 }, () => contact());
+    for (const record of records) await repo.saveContact(record);
+    const result = await Promise.allSettled([
+      repo.saveContact(contact()),
+      repo.saveContact(contact()),
+    ]);
+    expect(result.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect((await repo.load()).contacts).toHaveLength(20);
+    await repo.saveContact({ ...records[0], name: "Edited at capacity" });
+    expect(
+      (await repo.load()).contacts.find((c) => c.id === records[0].id)?.name,
+    ).toBe("Edited at capacity");
+    await repo.deleteContact(records[1].id);
+    await repo.saveContact(contact());
+    expect((await repo.load()).contacts).toHaveLength(20);
+  });
+});

@@ -169,13 +169,29 @@ export function createRepository(db: CalmDatabase) {
         [db.settings, db.trustedContacts],
         async () => {
           await db.settings.put(settingsSchema.parse(settings));
-          if (contact)
-            await db.trustedContacts.put(contactSchema.parse(contact));
+          if (contact) {
+            const record = contactSchema.parse(contact);
+            if (
+              !(await db.trustedContacts.get(record.id)) &&
+              (await db.trustedContacts.count()) >= 20
+            )
+              throw new Error("Had 20 kontak telah dicapai.");
+            await db.trustedContacts.put(record);
+          }
         },
       );
     },
     async saveContact(contact: Contact) {
-      await db.trustedContacts.put(contactSchema.parse(contact));
+      const record = contactSchema.parse(contact);
+      await db.transaction("rw", db.trustedContacts, async () => {
+        if (
+          !(await db.trustedContacts.get(record.id)) &&
+          (await db.trustedContacts.count()) >= 20
+        ) {
+          throw new Error("Had 20 kontak telah dicapai.");
+        }
+        await db.trustedContacts.put(record);
+      });
     },
     async deleteContact(id: string) {
       await db.trustedContacts.delete(id);

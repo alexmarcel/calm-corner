@@ -2542,3 +2542,67 @@ progress {
     transition: none;
   }
 }
+
+.diary-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.contacts-panel h2 {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+.trusted-contacts {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.trusted-contacts > li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.trusted-contact-details {
+  flex: 1 1 160px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.trusted-contact-details h3 {
+  font-family: inherit;
+  font-size: 16px;
+  margin: 0;
+}
+.trusted-contact-details p {
+  margin: 4px 0 0;
+}
+.contact-phone {
+  font-variant-numeric: tabular-nums;
+}
+.contact-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.contact-actions button {
+  min-height: 44px;
+}
+.contact-confirm {
+  flex-basis: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f6eee7;
+}
+.contact-confirm button + button {
+  margin-left: 16px;
+}
+.contacts-panel .contact-form {
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 20px;
+}
+.contacts-panel .contact-form h3 {
+  margin: 0;
+}

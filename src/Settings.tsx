@@ -3,28 +3,19 @@ import { useState, type RefObject } from "react";
 import {
   Download,
   Upload,
-  Trash2,
   ShieldCheck,
+  Trash2,
   Smartphone,
-  Plus,
 } from "lucide-react";
-import {
-  repository,
-  parseBackup,
-  downloadBackup,
-  type Backup,
-  type Contact,
-} from "./data";
+import { repository, parseBackup, downloadBackup, type Backup } from "./data";
 import type { DiaryHandle } from "./Diary";
 export default function Settings({
-  contacts,
-  refresh,
+  onContacts,
   onReset,
   diary,
   onPause,
 }: {
-  contacts: Contact[];
-  refresh: () => Promise<void>;
+  onContacts: () => void;
   onReset: () => void;
   diary: RefObject<DiaryHandle | null>;
   onPause: () => void;
@@ -176,40 +167,9 @@ export default function Settings({
       <section>
         <h3>Orang yang dipercayai</h3>
         <p>Kontak disimpan pada peranti ini sahaja.</p>
-        {contacts.map((c) => (
-          <div className="contact-row" key={c.id}>
-            <div>
-              <strong>{c.name}</strong>
-              <p>
-                {c.relationship} · {c.phone}
-              </p>
-            </div>
-            <button
-              className="icon-button"
-              aria-label={`Padam kontak ${c.name}`}
-              disabled={busy}
-              onClick={() => {
-                if (confirm(`Padam kontak ${c.name}?`))
-                  void perform(async () => {
-                    await repository.deleteContact(c.id);
-                    await refresh();
-                  });
-              }}
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
-        ))}
-        <ContactForm
-          disabled={busy || contacts.length >= 20}
-          onSave={async (c) => {
-            await perform(async () => {
-              await repository.saveContact(c);
-              await refresh();
-              setMessage("Kontak disimpan.");
-            });
-          }}
-        />
+        <button className="secondary" onClick={onContacts}>
+          Urus orang yang dipercayai
+        </button>
       </section>
       <section>
         <h3>
@@ -258,69 +218,5 @@ export default function Settings({
         </p>
       )}
     </div>
-  );
-}
-export function ContactForm({
-  onSave,
-  disabled = false,
-}: {
-  onSave: (c: Contact) => Promise<void>;
-  disabled?: boolean;
-}) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [relationship, setRelationship] = useState("");
-  return (
-    <form
-      className="contact-form"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        const now = new Date().toISOString();
-        await onSave({
-          id: crypto.randomUUID(),
-          name: name.trim(),
-          phone: phone.trim(),
-          relationship: relationship.trim(),
-          createdAt: now,
-          updatedAt: now,
-        });
-      }}
-    >
-      <label className="field">
-        Nama kontak
-        <input
-          required
-          maxLength={80}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <label className="field">
-        Hubungan (pilihan)
-        <input
-          maxLength={80}
-          value={relationship}
-          onChange={(e) => setRelationship(e.target.value)}
-        />
-      </label>
-      <label className="field">
-        Nombor telefon
-        <input
-          type="tel"
-          required
-          pattern="\+?[0-9 ()\-]{3,24}"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-      </label>
-      <button
-        className="secondary"
-        type="submit"
-        disabled={disabled || !name.trim()}
-      >
-        <Plus size={15} />
-        Simpan kontak
-      </button>
-    </form>
   );
 }

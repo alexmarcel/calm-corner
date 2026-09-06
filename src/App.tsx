@@ -31,6 +31,7 @@ import Tools, { type ToolsHandle } from "./Tools";
 import LeafMenu, { type Shortcut } from "./LeafMenu";
 import Settings from "./Settings";
 import About from "./About";
+import Contacts from "./Contacts";
 import {
   emptyData,
   localDate,
@@ -90,14 +91,18 @@ export default function App() {
     (trigger?.getClientRects().length ? trigger : menuTrigger.current)?.focus();
   }, []);
   const [checkInRequest, setCheckInRequest] = useState(0);
-  const checkInPending = useRef<"checkin" | "journal" | null>(null);
+  const checkInPending = useRef<"checkin" | "journal" | "contacts" | null>(
+    null,
+  );
   const tools = useRef<ToolsHandle>(null);
   const leafTrigger = useRef<HTMLButtonElement>(null);
   const leafDialog = useRef(false);
   const restoreLeafFocus = useCallback(() => {
     requestAnimationFrame(() => leafTrigger.current?.focus());
   }, []);
-  const requestNavigation = (destination: "checkin" | "journal") => {
+  const requestNavigation = (
+    destination: "checkin" | "journal" | "contacts",
+  ) => {
     setMenu(false);
     checkInPending.current = destination;
     setCheckInRequest((request) => request + 1);
@@ -434,15 +439,24 @@ export default function App() {
                 await refresh();
               }}
             />
-            {!loading && (
-              <Diary
-                key={`diary-${epoch}`}
-                ref={diary}
-                draft={data.draft}
-                journals={data.journals}
-                refresh={refresh}
-              />
-            )}
+            <div className="diary-column">
+              {!loading && (
+                <Diary
+                  key={`diary-${epoch}`}
+                  ref={diary}
+                  draft={data.draft}
+                  journals={data.journals}
+                  refresh={refresh}
+                />
+              )}
+              {!loading && (
+                <Contacts
+                  key={`contacts-${epoch}`}
+                  contacts={data.contacts}
+                  refresh={refresh}
+                />
+              )}
+            </div>
           </div>
         )}
         <Tools ref={tools} pauseSignal={pauseSignal} onSOS={sos} />
@@ -538,8 +552,10 @@ export default function App() {
       {modal === "settings" && (
         <Modal title="Ruang & tetapan anda" onClose={close} wide>
           <Settings
-            contacts={data.contacts}
-            refresh={refresh}
+            onContacts={() => {
+              close();
+              requestNavigation("contacts");
+            }}
             onReset={reset}
             diary={diary}
             onPause={pause}
